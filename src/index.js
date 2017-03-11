@@ -121,7 +121,7 @@ var App = React.createClass({
     return (
       <div>
         <Header currentUser={this.state.currentUser} />
-        <SortBar movieCount={this.state.movies.length} viewChanged={this.viewChanged} />
+        <SortBar movieCount={this.state.movies.length} viewChanged={this.viewChanged} currentView={this.state.currentView}/>
         <div className="main row">
           {this.renderMainSection()}
         </div>
@@ -129,5 +129,6 @@ var App = React.createClass({
     )
   }
 })
+
 
 ReactDOM.render(<App />, document.getElementById("app"))
