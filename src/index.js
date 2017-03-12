@@ -54,14 +54,24 @@ var App = React.createClass({
     })
   },
   viewChanged: function(view) {
-    // View is either "latest" (movies sorted by release), "alpha" (movies
-    // sorted A-Z), or "map" (the data visualized)
-    // We should probably do the sorting and setting of movies in state here.
-    // You should really look at https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort
-    this.setState({
-      currentView: view
-    })
-  },
+      var sortedmovies = this.state.movies
+      // View is either "latest" (movies sorted by release), "alpha" (movies
+      // sorted A-Z), or "map" (the data visualized)
+      // We should probably do the sorting and setting of movies in state here.
+      // You should really look at https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort
+
+      if (view === 'latest'){
+          sortedmovies = movieData.sort(this.movieCompareByReleased)
+      } else if (view === 'alpha') {
+          sortedmovies: movieData.sort(this.movieCompareByTitle)
+      }
+
+      this.setState({
+        currentView: view,
+        movies: sortedmovies
+      })
+    },
+
   renderMovieDetails: function() {
     if (this.state.currentMovie == null) {
       return <NoCurrentMovie resetMovieListClicked={this.resetMovieListClicked} />
@@ -115,7 +125,7 @@ var App = React.createClass({
   componentDidMount: function() {
     // We'll need to enter our Firebase configuration at the top of this file and
     // un-comment this to make the Firebase database work
-    base.syncState('/movies', { context: this, state: 'movies', asArray: true })
+    base.syncState('movies', { context: this, state: 'movies', asArray: true })
   },
   render: function() {
     return (
