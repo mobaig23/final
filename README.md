@@ -2,6 +2,8 @@
 
 ## Getting Started
 
+active internet address - https://buyflix-3554a.firebaseapp.com/
+
 Upon download or clone:
 
 ```

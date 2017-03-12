@@ -29,7 +29,7 @@ var TheatreMap = require('./components/TheatreMap')
 var Rebase = require('re-base')
 var base = Rebase.createClass({
   apiKey: "AIzaSyDltnmS8KTzFgNu09wr2TQf-byYD736sLs",   // replace with your Firebase application's API key
-  databaseURL: "https://console.firebase.google.com/project/buyflix-3554a", // replace with your Firebase application's database URL
+  databaseURL: "https://buyflix-3554a.firebaseio.com/", // replace with your Firebase application's database URL
 })
 
 var App = React.createClass({
@@ -125,7 +125,7 @@ var App = React.createClass({
   componentDidMount: function() {
     // We'll need to enter our Firebase configuration at the top of this file and
     // un-comment this to make the Firebase database work
-    base.syncState('movies', { context: this, state: 'movies', asArray: true })
+    base.syncState('\movies', { context: this, state: 'movies', asArray: true })
   },
   render: function() {
     return (
