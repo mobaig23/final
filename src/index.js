@@ -16,7 +16,6 @@ var MovieDetails = require('./components/MovieDetails')
 var MovieList = require('./components/MovieList')
 var NoCurrentMovie = require('./components/NoCurrentMovie')
 var SortBar = require('./components/SortBar')
-var TheatreMap = require('./components/TheatreMap')
 
 // There should really be some JSON-formatted data in movies.json, instead of an empty array.
 // I started writing this command to extract the data from the learn-sql workspace
@@ -54,37 +53,38 @@ var App = React.createClass({
     })
   },
   viewChanged: function(view) {
-      var sortedmovies = this.state.movies
       // View is either "latest" (movies sorted by release), "alpha" (movies
       // sorted A-Z), or "map" (the data visualized)
       // We should probably do the sorting and setting of movies in state here.
       // You should really look at https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort
-
+  var sortedMovies = this.state.movies
       if (view === 'latest'){
-          sortedmovies = movieData.sort(this.movieCompareByReleased)
+          sortedMovies = movieData.sort(this.movieCompareByReleased)
       } else if (view === 'alpha') {
-          sortedmovies: movieData.sort(this.movieCompareByTitle)
+          sortedMovies: movieData.sort(this.movieCompareByTitle)
       }
 
       this.setState({
-        currentView: view,
-        movies: sortedmovies
+        currentView: view
       })
     },
 
-  renderMovieDetails: function() {
-    if (this.state.currentMovie == null) {
-      return <NoCurrentMovie resetMovieListClicked={this.resetMovieListClicked} />
-    } else {
-      return <MovieDetails movie={this.state.currentMovie}
-                           movieWatched={this.movieWatched} />
-    }
-  },
-  renderMainSection: function() {
+    renderMainSection: function() {
     if (this.state.currentView === 'map') {
       return (
         <div className="col-sm-12">
-          <TheatreMap />
+        <h3>  <Gmaps width={'100%'}
+                 height={'480px'}
+                 lat={'41.9021988'}
+                 lng={'-87.6285782'}
+                 zoom={11}
+                 loadingMessage={'Searching...'}
+                 params={{v: '3.exp', key: 'AIzaSyB3p_xQIXsFMDGLYNEiVkgW5fsVSUOd01c'}}>
+            {theatres.map(function(theatres) {
+              return <Marker lat={theatres.lat} lng={theatres.long} />
+            })}
+          </Gmaps> </h3>
+
         </div>
       )
     } else {
@@ -96,7 +96,14 @@ var App = React.createClass({
       )
     }
   },
-
+  renderMovieDetails: function() {
+    if (this.state.currentMovie == null) {
+      return <NoCurrentMovie resetMovieListClicked={this.resetMovieListClicked} />
+    } else {
+      return <MovieDetails movie={this.state.currentMovie}
+                           movieWatched={this.movieWatched} />
+    }
+  },
   movieCompareByTitle: function(movieA, movieB) {
     if (movieA.title < movieB.title) {
       return -1
@@ -125,13 +132,13 @@ var App = React.createClass({
   componentDidMount: function() {
     // We'll need to enter our Firebase configuration at the top of this file and
     // un-comment this to make the Firebase database work
-    base.syncState('\movies', { context: this, state: 'movies', asArray: true })
+    base.syncState('./movies', { context: this, state: 'movies', asArray: true })
   },
   render: function() {
     return (
       <div>
         <Header currentUser={this.state.currentUser} />
-        <SortBar movieCount={this.state.movies.length} viewChanged={this.viewChanged} currentView={this.state.currentView}/>
+        <SortBar movieCount={this.state.movies.length} currentView={this.state.currentView} viewChanged={this.viewChanged} />
         <div className="main row">
           {this.renderMainSection()}
         </div>
